@@ -1,0 +1,27 @@
+.register {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    padding: 25px;
+}
+
+.Registratinmsg {
+    position: relative;
+    top: 30%;
+    text-align: center;
+    margin: 80px;
+}
+
+.loginfromsignup {
+    position: relative;
+    top:30%
+}
+
+.inputreg{
+    border: 0;
+    outline: 0;
+    background: transparent;
+    border-bottom: 1px solid black;
+    margin: 10px;
+    width: 100%;
+}   
