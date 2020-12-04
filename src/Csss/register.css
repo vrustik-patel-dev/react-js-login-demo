@@ -3,6 +3,7 @@
     height: 100%;
     width: 100%;
     padding: 25px;
+    background-image: linear-gradient(to right, #B6A004, #f7ec9e);
 }
 
 .Registratinmsg {
@@ -14,14 +15,51 @@
 
 .loginfromsignup {
     position: relative;
-    top:30%
+    top: 40%;
 }
 
 .inputreg{
     border: 0;
     outline: 0;
     background: transparent;
-    border-bottom: 1px solid black;
-    margin: 10px;
+    border-bottom: 1px solid #403C10;
     width: 100%;
-}   
+} 
+
+.regstercontent{
+    background: #ffffff;
+    border-top-left-radius: 10% 50%;
+    border-bottom-left-radius: 10% 50%;
+}
+
+.registerbtn{
+    width: 25%;
+    margin-top: 80px;
+    height: 60px;
+    font-size: 24px;
+    background-color: #B6A004;
+    border: 0px;
+}
+
+.registerbtn:hover {
+    background-color: #B6A004;
+    box-shadow: 4px 4px 8px #403C10;
+}
+
+.registerbtn:focus{
+    background-color:#564A04;
+}
+
+.loginbtnreg {
+    margin: 10px;
+    width: 25%;
+}
+
+.registertitle {
+    margin-block : 100px;
+}
+
+.inputregform{
+    width: 100%;
+    margin: 10px
+}

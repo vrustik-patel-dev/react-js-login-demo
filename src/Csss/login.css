@@ -4,11 +4,22 @@
 
 .login-form-button {
     width: 100%;
+    background-color: #B6A004;
+    border: 0px;
+}
+
+.login-form-button:hover {
+    background-color: #B6A004;
+    box-shadow: 4px 4px 8px #403C10;
+}
+
+.login-form-button:focus{
+    background-color:#564A04;
 }
 
 .loginContainer {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-image: linear-gradient(#ffffff 50%,#d3dbe0,#9EB0BD);
+    background-image: linear-gradient(#ffffff 60%,#ddcc48);
 }

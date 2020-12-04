@@ -1,4 +1,8 @@
 import React, { useState } from 'react';
+import Cookies from 'js-cookie';
+import { connect } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+
 import { 
     Typography, 
     Input, 
@@ -24,32 +28,64 @@ import {
 import 'antd/dist/antd.css';
 import '../../Csss/login.css'
 
+import {actions} from '../../Actions'
+
 import loginart from '../../Images/loginart.png';
 
 
 const { Text, Title, Link } = Typography;
 const {Header,Content,Footer} = Layout;
 
-const Login = () => {
+const Login = ({disp,reduxstate, sending}) => {
 
     const [id,setId] = useState('');
     const [password,setPassword] = useState('');
-    const [remember,setRemember] = useState(true)
+    const [remember,setRemember] = useState(true);
+    
+    let uname = Cookies.get('username');
+    let pwd = Cookies.get('password');
+
+    const history = useHistory();
+
+    function handleSubmit () {
+        sending(actions.auth.trigger());
+        var userdata = localStorage.getItem(id);
+        userdata = JSON.parse(userdata);
+        if(userdata){
+            if (password===userdata.password){
+                if(remember){
+                    Cookies.set('username',id);
+                    Cookies.set('password',password)
+                }
+                disp(actions.auth.success());
+                history.replace("/");
+            }
+        }
+    }
 
 
     return <>
     <Layout className="loginContainer">
     <Header style={{background: 'transparent'}}>
         <Affix  style={{ position: 'absolute', top: 10, left: 10 }}>
-            <Button>More About Demo</Button>
+            <Button href="https://github.com/vrustik/react-js-login-demo">More About Demo</Button>
         </Affix>
         <Affix  style={{ position: 'absolute', top: 10, right: 10 }}>
-            <Button><GithubFilled /></Button>
+            <Button href="https://github.com/vrustik/react-js-login-demo"><GithubFilled /></Button>
         </Affix>
     </Header>
 
     <Content>
-        <Form direction="vertical" className="loginForm">
+        <Form 
+            direction="vertical"
+            className="loginForm"
+            onFinish={()=>handleSubmit()}
+            initialValues = {{
+                username: uname,
+                password: pwd,
+                remember: remember,
+            }}
+        >
             <Row justify="center">
                 <Col>
                     <Image
@@ -68,7 +104,6 @@ const Login = () => {
                         rules={[{ required: true, message: 'Please input your User ID!' }]}
                     >
                         <Input 
-                            value={id}
                             placeholder="User ID" 
                             prefix={<MailOutlined  />} 
                             onChange={e=>setId(e.target.value)}    
@@ -79,7 +114,6 @@ const Login = () => {
                         rules={[{ required: true, message: 'Please input your password!' }]}
                     >
                         <Input.Password 
-                            value={password}
                             placeholder="Password" 
                             iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)} 
                             prefix={<LockOutlined />}
@@ -99,7 +133,7 @@ const Login = () => {
                     </Form.Item>
                     
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" className="login-form-button">
+                        <Button shape="round" type="primary" htmlType="submit" className="login-form-button">
                             LOG IN
                         </Button>
                     </Form.Item>
@@ -108,7 +142,7 @@ const Login = () => {
                         <Text>Don't have an Account?</Text>
                     </Row>
                     <Row justify="center">
-                        <Link>Register</Link>
+                        <Link href="/register">Register</Link>
                     </Row>
                 </Col>
             </Row>
@@ -120,4 +154,13 @@ const Login = () => {
     </>;
 }
 
-export default Login;
+
+const mapDispatchToProps = dispatch => ({
+    disp: something => dispatch(something)
+})
+
+const mapStateToProps = state => ({
+    reduxstate:state
+  })
+
+export default connect(mapStateToProps,mapDispatchToProps)(Login);
