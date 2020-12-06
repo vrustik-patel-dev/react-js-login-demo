@@ -4,7 +4,6 @@ import { useHistory } from 'react-router-dom';
 import {
     Layout,
     Empty,
-    Avatar,
     Row,
     List,
     Typography,
@@ -13,7 +12,7 @@ import {
     Image
 } from 'antd';
 
-
+import { actions } from '../../Actions';
 import Logo from '../../Images/home.png';
 
 
@@ -23,11 +22,15 @@ import '../../Csss/home.css';
 const {Header, Content, Sider} = Layout;
 const { Paragraph, Title} =Typography;
 
-const Home = () => {
+const Home = ({ data, callforlogin }) => {
 
     const history = useHistory();
 
+    console.log("Home :",data);
+
+
     const handleLogout = () => {
+        callforlogin(actions.auth.trigger({forauth:false}));        
         history.replace("/login");
     }
 
@@ -40,11 +43,12 @@ const Home = () => {
                     dataSource={Object.entries(localStorage)}
                     renderItem={item => (
                       <List.Item className="listofuser">
-                            <List.Item.Meta
-                                avatar={<Avatar>{JSON.parse(item[1]).fname.charAt(0)}</Avatar>}
-                                title={<Title level={3}>{JSON.parse(item[1]).fname} {JSON.parse(item[1]).lname}</Title>}
-                                description={<Paragraph>{item[0]}</Paragraph>}
-                            />
+                            <Row>
+                                <Title level={3}>{JSON.parse(item[1]).fname} {JSON.parse(item[1]).lname}</Title>
+                            </Row>
+                            <Row>
+                                <Paragraph>{item[0]}</Paragraph>
+                            </Row>
                         </List.Item>
                     )}
                 />
@@ -54,7 +58,7 @@ const Home = () => {
         <Layout>
             <Header className="headerhome">
                 <Row justify="center">
-                    <Title>DEMO</Title>
+                    <Title>Hello ,{data.username}</Title>
                 </Row>
              
                 <Affix  style={{ position: 'absolute', top: 0, right: 10 }}>

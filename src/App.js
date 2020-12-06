@@ -3,41 +3,45 @@ import { connect } from 'react-redux';
 
 import { Route, BrowserRouter as Router, Switch, Redirect } from "react-router-dom";
 
-import {actions} from './Actions'
-
 import Login from './Pages/Login/login';
 import Register from './Pages/Register/register';
 import Home from './Pages/Home/home';
 
 
-
-
 const App = ({disp, reduxstate}) => {
 
-  const [loggedIn,setLoggedin] = useState(false);
-  const [init,setInit] = useState(false)
+  const [loggedIn,setLoggedin] = useState();
 
   useEffect(()=>{
-    disp(actions.auth.trigger(true))
+    console.log(reduxstate);
     if(reduxstate){
-    setLoggedin(reduxstate.auth);
+      if(loggedIn!==reduxstate.auth){
+        setLoggedin(reduxstate.auth);
+      }
     }
-  })
+  },[reduxstate,loggedIn])
 
-  function tryingthis(){
-    setLoggedin(reduxstate.auth)
+  function callforlogin(dispfromdata){
+    disp(dispfromdata);
+    if(reduxstate){
+      if(loggedIn!==reduxstate.auth){
+        setLoggedin(reduxstate.auth);
+      }
+    }
   }
 
   return(
   <Router>
     <Switch>
       <Route exact path="/">
-        {loggedIn ? <Home/> : <Redirect to="/login" />}
+        {loggedIn ? <Home callforlogin={callforlogin} data={reduxstate}/> : <Redirect to="/login" />}
       </Route>
       <Route exact path="/login">
-        {loggedIn ? <Redirect to="/"/> : <Login sending={tryingthis}/>}
+        {loggedIn ? <Redirect to="/"/> : <Login callforlogin={callforlogin} data={reduxstate}/>}
       </Route>
-      <Route exact path="/register" component={Register} />
+      <Route exact path="/register">
+        <Register callforlogin={callforlogin}/>
+      </Route>
     </Switch>
   </Router>
   )

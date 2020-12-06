@@ -14,13 +14,16 @@ import {
 } from 'antd';
 
 
+import {actions} from '../../Actions'
+
+
 import '../../Csss/register.css'
 
 
 const { Text, Title } = Typography
 const { Content, Sider } = Layout
 
-const Register = () => {
+const Register = ({callforlogin}) => {
 
     const [fname,setFname] = useState('');
     const [lname,setLname] = useState('');
@@ -54,7 +57,8 @@ const Register = () => {
         }
 
         localStorage.setItem(emailid, JSON.stringify(regesteruser));
-
+        callforlogin(actions.auth.trigger({id:emailid,password:password,remember:true,forauth:true}));
+        history.replace("/");
     }
 
 
