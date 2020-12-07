@@ -137,10 +137,6 @@ const Home = ({ data, callforlogin }) => {
                     width={"25%"}
                     onClose={closeDrawer}
                     visible={drawervisible} >
-
-                    <Row justify="center">
-                        <Avatar className="useravatar" icon={<UserOutlined />} />
-                    </Row>
                 
                     <Descriptions
                         title="User Profile"

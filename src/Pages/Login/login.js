@@ -80,6 +80,7 @@ const Login = ({ callforlogin }) => {
                     callforlogin(actions.auth.trigger({forauth:false}))
                 }
             }else{
+                setLoading(false);
                 message.error('Wrong User Id!')
             }
         }catch(err){
