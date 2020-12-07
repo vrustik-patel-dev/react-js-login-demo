@@ -10,18 +10,21 @@ import {
     Form,
     Input,
     DatePicker,
-    Select
+    Select,
+    Result,
+    AutoComplete,
 } from 'antd';
 
 
-import {actions} from '../../Actions'
+import {actions} from '../../Actions';
 
 
-import '../../Csss/register.css'
+import '../../Csss/register.css';
 
 
-const { Text, Title } = Typography
-const { Content, Sider } = Layout
+const { Text, Title } = Typography;
+const { Content, Sider } = Layout;
+const { Option } = AutoComplete;
 
 const Register = ({callforlogin}) => {
 
@@ -32,20 +35,16 @@ const Register = ({callforlogin}) => {
     const [phonenumber,setPhonenumber] = useState();
     const [bdate,setBdate] = useState();
     const [gender,setGender] = useState();
+    const [registered,setRegistered] = useState(false);
+
+    const [autoresult,setAutoresult] = useState([]);
 
     
     const history = useHistory();
 
 
 
-    const handleSubmit = () => {
-        console.log("fname", fname);
-        console.log("lname",lname);
-        console.log("password",password);
-        console.log("emailid",emailid);
-        console.log("phonenumber",phonenumber);
-        console.log("bdate",bdate);
-        console.log("gender",gender);
+    async function handleSubmit() {
 
         let regesteruser = {
             fname : fname,
@@ -57,8 +56,8 @@ const Register = ({callforlogin}) => {
         }
 
         localStorage.setItem(emailid, JSON.stringify(regesteruser));
-        callforlogin(actions.auth.trigger({id:emailid,password:password,remember:true,forauth:true}));
-        history.replace("/");
+        callforlogin(actions.auth.trigger({forauth:true,uname:fname}));
+        setRegistered(true);
     }
 
 
@@ -67,9 +66,39 @@ const Register = ({callforlogin}) => {
     }
 
 
+    const handleautosearch = (value) => {
+        let autores = [];
+
+        if (!value || value.indexOf('@')>=0) {
+            autores = [];
+        } else {
+            autores = ['gmail.com','yahoo.com','yahoo.in','hotmail.com','example.com'].map((domain)=>`${value}@${domain}`);
+        }
+
+        setAutoresult(autores);
+    }
+
+
+    if(registered){
+        let msg = `Hello ${fname} ${lname}, Welcome to our Web-World....!!!!!`
+        return <Layout style={{ minHeight: '100vh' }} className="centerresult">
+            <Result
+                status="success"
+                title="Account Created Successfully!"
+                subTitle={msg}
+                extra={[
+                    <Button shape="round" type="primary" key="console" onClick={()=>history.replace("/")}>
+                        Login
+                    </Button>,
+                    <Button shape="round" key="buy" onClick={()=>setRegistered(false)}>Create another account</Button>,
+                ]}
+            />
+        </Layout>
+    }
+
 
     return <>
-    <Layout className="register">
+    <Layout className="register" style={{ minHeight: '100vh' }}>
         <Sider width={400} style={{background:'transparent'}}>
             
             <Title className="Registratinmsg">
@@ -106,6 +135,7 @@ const Register = ({callforlogin}) => {
                             <Form.Item
                                 className="inputregform"
                                 name="fname"
+                                validateTrigger="onBlur"
                                 rules={
                                     [
                                         { 
@@ -136,6 +166,7 @@ const Register = ({callforlogin}) => {
                             <Form.Item
                                 className="inputregform"
                                 name="lname"
+                                validateTrigger="onBlur"
                                 rules={
                                     [
                                         { 
@@ -164,6 +195,7 @@ const Register = ({callforlogin}) => {
                             <Form.Item
                                 className="inputregform"
                                 name="password"
+                                validateTrigger="onBlur"
                                 rules={
                                     [
                                         { 
@@ -191,6 +223,7 @@ const Register = ({callforlogin}) => {
                             <Form.Item
                                 className="inputregform"
                                 name="confirmpassword"
+                                validateTrigger="onBlur"
                                 rules={
                                     [
                                         { 
@@ -220,15 +253,30 @@ const Register = ({callforlogin}) => {
                             <Form.Item
                                 className="inputregform"
                                 name="emailid"
+                                validateTrigger="onBlur"
                                 rules={[{ required: true, type: "email", message: 'Please enter valid E-mail ID!' }]}
                             >
-                                <Input value={emailid} className="inputreg" size="large" placeholder="Your Email" onChange={e=>setEmailid(e.target.value)} />
+
+                                <AutoComplete
+                                    onSearch={handleautosearch}
+                                    className="inputreg"
+                                    size="large" 
+                                    placeholder="Email-ID"
+                                    onChange={e=>setEmailid(e)}
+                                >
+                                    {autoresult.map((email) => (
+                                        <Option key={email} value={email}>
+                                            {email}
+                                        </Option>
+                                    ))}
+                                </AutoComplete>
                             </Form.Item>
                         </Row>
                         <Row>
                             <Form.Item
                                 className="inputregform"
                                 name="phonenumber"
+                                validateTrigger="onBlur"
                                 rules={
                                     [
                                         { required: true,  len:10, message: 'Enter 10-Digit number!' },
@@ -250,15 +298,17 @@ const Register = ({callforlogin}) => {
                             <Form.Item
                                 className="inputregform"
                                 name="bdate"
+                                validateTrigger="onBlur"
                                 rules={[{ required: true,  message: 'Enter BirthDate!' }]}
                             >
-                                <DatePicker size="large" className="inputreg" placeholder="Birth Date" onChange={e=>setBdate(e._d)}/>
+                                <DatePicker size="large" className="inputreg" placeholder="Birth Date" onChange={(date,datestring)=>setBdate(datestring)}/>
                             </Form.Item>
                         </Row>
                         <Row>
                             <Form.Item
                                 className="inputregform"
                                 name="gender"
+                                validateTrigger="onBlur"
                                 rules={[{ required: true,  message: 'Enter BirthDate!' }]}
                             >
                                 <Select size="large" className="genreg" placeholder="Select Gender" onSelect={e=>setGender(e)}>

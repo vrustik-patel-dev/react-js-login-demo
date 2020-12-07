@@ -13,7 +13,9 @@ import {
     Affix,
     Button,
     Image,
-    Layout
+    Layout,
+    Spin,
+    message
 } from 'antd';
 
 import { 
@@ -21,8 +23,9 @@ import {
     EyeTwoTone, 
     MailOutlined, 
     LockOutlined ,
-    GithubFilled
+    GithubFilled, 
 } from '@ant-design/icons';
+
 
 import 'antd/dist/antd.css';
 import '../../Csss/login.css'
@@ -43,25 +46,60 @@ const Login = ({ callforlogin }) => {
     const [id,setId] = useState(uname);
     const [password,setPassword] = useState(pwd);
     const [remember,setRemember] = useState(true);
+    const [loading,setLoading] = useState(false);
     
 
 
     const history = useHistory();
 
-    function handleSubmit () {
-        callforlogin(actions.auth.trigger({id:id,password:password,remember:remember,forauth:true}));
-        history.replace("/");
+
+    const delay = (ms) => new Promise(res => setTimeout(res, ms))
+
+    async function checkauth(){
+
+        setLoading(true);
+
+        try{
+            var userdata = localStorage.getItem(id);
+            userdata = JSON.parse(userdata);
+
+            if(userdata){
+                if (password===userdata.password){
+                    if(remember){
+                        Cookies.set('username',id);
+                        Cookies.set('password',password)
+                    }
+                    await delay(4000);
+                    setLoading(false);
+                    callforlogin(actions.auth.trigger({forauth:true,uname:userdata,id:id}));
+
+                    history.replace("/");
+                }else{
+                    setLoading(false);
+                    message.error('Wrong Password!')
+                    callforlogin(actions.auth.trigger({forauth:false}))
+                }
+            }else{
+                message.error('Wrong User Id!')
+            }
+        }catch(err){
+            console.log("Error :",err);
+            setLoading(false);
+        }
+
     }
 
 
+    
+
     return <>
-    <Layout className="loginContainer">
+    <Layout className="loginContainer" style={{ minHeight: '100vh' }}>
         <Header style={{background: 'transparent'}}>
             <Affix  style={{ position: 'absolute', top: 10, left: 10 }}>
-                <Button href="https://github.com/vrustik/react-js-login-demo">More About Demo</Button>
+                <Button href="https://github.com/vrustik/react-js-login-demo"  shape="round">More About Demo</Button>
             </Affix>
             <Affix  style={{ position: 'absolute', top: 10, right: 10 }}>
-                <Button href="https://github.com/vrustik/react-js-login-demo"><GithubFilled /></Button>
+                <Button href="https://github.com/vrustik/react-js-login-demo"  shape="round"><GithubFilled /></Button>
             </Affix>
         </Header>
 
@@ -69,7 +107,7 @@ const Login = ({ callforlogin }) => {
             <Form 
                 direction="vertical"
                 className="loginForm"
-                onFinish={()=>handleSubmit()}
+                onFinish={()=>checkauth()}
                 initialValues = {{
                     username: uname,
                     password: pwd,
@@ -81,6 +119,7 @@ const Login = ({ callforlogin }) => {
                         <Image
                             width={300}
                             src={loginart}
+                            preview={false}
                         />
                     </Col>
 
@@ -89,6 +128,7 @@ const Login = ({ callforlogin }) => {
                         <Title>LOG IN</Title>
                     
                         <Divider />
+
                         <Form.Item
                             name="username"
                             rules={[{ required: true, message: 'Please input your User ID!' }]}
@@ -123,9 +163,11 @@ const Login = ({ callforlogin }) => {
                         </Form.Item>
                     
                         <Form.Item>
-                            <Button shape="round" type="primary" htmlType="submit" className="login-form-button">
-                                LOG IN
-                            </Button>
+                            <Spin spinning={loading}>
+                                <Button shape="round" type="primary" htmlType="submit" className="login-form-button">
+                                    LOG IN
+                                </Button>
+                            </Spin>
                         </Form.Item>
                     
                         <Row justify="center">

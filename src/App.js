@@ -6,6 +6,7 @@ import { Route, BrowserRouter as Router, Switch, Redirect } from "react-router-d
 import Login from './Pages/Login/login';
 import Register from './Pages/Register/register';
 import Home from './Pages/Home/home';
+import NoMatchPage from './Pages/NotFound';
 
 
 const App = ({disp, reduxstate}) => {
@@ -13,7 +14,6 @@ const App = ({disp, reduxstate}) => {
   const [loggedIn,setLoggedin] = useState();
 
   useEffect(()=>{
-    console.log(reduxstate);
     if(reduxstate){
       if(loggedIn!==reduxstate.auth){
         setLoggedin(reduxstate.auth);
@@ -42,6 +42,8 @@ const App = ({disp, reduxstate}) => {
       <Route exact path="/register">
         <Register callforlogin={callforlogin}/>
       </Route>
+
+      <Route component={NoMatchPage} />
     </Switch>
   </Router>
   )
