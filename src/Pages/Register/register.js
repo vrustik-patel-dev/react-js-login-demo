@@ -41,7 +41,7 @@ const Register = ({callforlogin}) => {
     let checksessionauth = sessionStorage.getItem("auth");
 
     const history = useHistory();
-    
+
     useEffect(()=>{
         if(initial){
             setInitial(false);
@@ -128,7 +128,9 @@ const Register = ({callforlogin}) => {
 
         <Content className="regstercontent">
             <Form 
-                className="loginForm" 
+                className="loginForm"
+                size="large"
+                scrollToFirstError={true}
                 onFinish={()=>handleSubmit()}
             >
                 <Row>
@@ -154,20 +156,16 @@ const Register = ({callforlogin}) => {
                                         {
                                             validator: (_, value) => {
                                                     //Validate if only alphabets are entered or not
-                                                    if(/^[a-zA-Z]+$/.test(value)){
+                                                    if(!value || /^[a-zA-Z]+$/.test(value)){
                                                         return Promise.resolve(setFname(value));
                                                     }
-                                                    if(value.length===0){
-                                                        return Promise.resolve(setFname(''));
-                                                    }
-                                                    return Promise.reject('Please Enter Alphabets only!');                                            
+                                                    return Promise.reject('Please Enter Alphabets only!');
                                             }
                                         }
                                     ]
                                 }
                             >
                                 <Input 
-                                    size="large" 
                                     className="inputreg" 
                                     placeholder="First Name"
                                     />
@@ -186,7 +184,7 @@ const Register = ({callforlogin}) => {
                                         {
                                             validator: (_, value) => {
                                                     //Validate if only alphabets are entered or not
-                                                    if(/^[a-zA-Z]+$/.test(value)){
+                                                    if(!value || /^[a-zA-Z]+$/.test(value)){
                                                         return Promise.resolve(setLname(value));
                                                     }
                                                     return Promise.reject('Please Enter Alphabets only!');                                            
@@ -195,8 +193,7 @@ const Register = ({callforlogin}) => {
                                     ]
                                 }
                             >
-                                <Input 
-                                    size="large"
+                                <Input
                                     className="inputreg"
                                     placeholder="Last Name"
 
@@ -216,7 +213,7 @@ const Register = ({callforlogin}) => {
                                         {
                                             validator: (_, value) => {
                                                     //Check for one small alphabet, one capital alphabet, one digit, one special character and minimum length
-                                                    if(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!_%*?&])[A-Za-z\d@$!_%*?&]{8,}$/.test(value)){
+                                                    if(!value || /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!_%*?&])[A-Za-z\d@$!_%*?&]{8,}$/.test(value)){
                                                         return Promise.resolve(setPassword(value));
                                                     }
                                                     return Promise.reject('Password Must contain Minimum eight characters, at least one [A-Z], one [a-z], one [0-9] and one special character!');                                            
@@ -227,7 +224,6 @@ const Register = ({callforlogin}) => {
                             >
                                 <Input.Password 
                                     className="inputreg"
-                                    size="large"
                                     placeholder="Password"
                                     />
                             </Form.Item>
@@ -240,7 +236,7 @@ const Register = ({callforlogin}) => {
                                 rules={
                                     [
                                         { 
-                                            required: true, message: 'Please Confirm Password!' 
+                                            required: true, message: 'Please confirm Password!' 
                                         },
                                         ({ getFieldValue }) => ({
                                             validator(rule, value) {
@@ -256,7 +252,6 @@ const Register = ({callforlogin}) => {
                             >
                                 <Input.Password 
                                     className="inputreg"
-                                    size="large"
                                     placeholder="Confirm Password" 
                                 />
                             </Form.Item>
@@ -274,7 +269,6 @@ const Register = ({callforlogin}) => {
                                 <AutoComplete
                                     onSearch={handleautosearch}
                                     className="inputreg"
-                                    size="large" 
                                     placeholder="Email-ID"
                                     onChange={e=>setEmailid(e)}
                                 >
@@ -293,11 +287,11 @@ const Register = ({callforlogin}) => {
                                 validateTrigger="onBlur"
                                 rules={
                                     [
-                                        { required: true,  len:10, message: 'Enter 10-Digit number!' },
+                                        { required: true,  len:10, message: 'Please enter Phone number!' },
                                         {
                                             validator: (_, value) => {
                                                     //Validate if only digits are entered or not
-                                                    if(/^\d+$/.test(value)){
+                                                    if(!value || /^\d+$/.test(value)){
                                                         return Promise.resolve(setPhonenumber(value));
                                                     }
                                                     return Promise.reject('Enter Valid Phone Number');                                            
@@ -315,10 +309,9 @@ const Register = ({callforlogin}) => {
                                 className="inputregform"
                                 name="bdate"
                                 validateTrigger="onBlur"
-                                rules={[{ required: true,  message: 'Enter BirthDate!' }]}
+                                rules={[{ required: true,  message: 'Please enter BirthDate!' }]}
                             >
-                                <DatePicker 
-                                    size="large" 
+                                <DatePicker
                                     className="inputreg" 
                                     placeholder="Birth Date" 
                                     onChange={(date,datestring)=>setBdate(datestring)}
@@ -331,9 +324,9 @@ const Register = ({callforlogin}) => {
                                 className="inputregform"
                                 name="gender"
                                 validateTrigger="onBlur"
-                                rules={[{ required: true,  message: 'Enter BirthDate!' }]}
+                                rules={[{ required: true,  message: 'Please enter Gender!' }]}
                             >
-                                <Select size="large" className="genreg" placeholder="Select Gender" onSelect={e=>setGender(e)}>
+                                <Select className="genreg" placeholder="Select Gender" onSelect={e=>setGender(e)}>
                                     <Select.Option value="Male">Male</Select.Option>
                                     <Select.Option value="Female">Female</Select.Option>
                                     <Select.Option value="Other">Other</Select.Option>

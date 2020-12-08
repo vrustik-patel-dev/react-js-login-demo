@@ -46,7 +46,6 @@ const Login = ({ callforlogin }) => {
     let checksessionauth = sessionStorage.getItem("auth");
 
     useEffect(()=>{
-        console.log("from login page");
         if(initial){
             setInitial(false);
             if(checksessionauth){
