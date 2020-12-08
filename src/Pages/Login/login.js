@@ -24,6 +24,8 @@ import {
     GithubFilled, 
 } from '@ant-design/icons';
 
+import { useAuth0 } from '@auth0/auth0-react';
+
 import 'antd/dist/antd.css';
 import '../../Csss/login.css'
 import {actions} from '../../Actions';
@@ -32,7 +34,7 @@ import loginart from '../../Images/loginart.png';
 const { Text, Title, Link } = Typography;
 const {Header,Content,Footer} = Layout;
 
-const Login = ({ callforlogin }) => {
+const Login = ({ callforlogin,auth0 }) => {
     let uname = Cookies.get('username');
     let pwd = Cookies.get('password');
     const [id,setId] = useState(uname);
@@ -40,7 +42,9 @@ const Login = ({ callforlogin }) => {
     const [remember,setRemember] = useState(true);
     const [loading,setLoading] = useState(false);
     const [initial,setInitial] = useState(true);
-    
+
+    const { loginWithRedirect } = useAuth0();
+
     const history = useHistory();
 
     let checksessionauth = sessionStorage.getItem("auth");
@@ -110,7 +114,7 @@ const Login = ({ callforlogin }) => {
             <Form 
                 direction="vertical"
                 className="loginForm"
-                onFinish={()=>checkauth()}
+                onFinish={()=>{checkauth();loginWithRedirect()}}
                 initialValues = {{
                     username: uname,
                     password: pwd,

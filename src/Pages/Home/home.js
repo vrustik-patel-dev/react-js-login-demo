@@ -19,6 +19,7 @@ import {
     Tooltip,
 } from 'antd';
 
+import { useAuth0 } from "@auth0/auth0-react";
 
 import { actions } from '../../Actions';
 
@@ -40,6 +41,8 @@ const Home = ({ data, callforlogin }) => {
 
     const [loading,setLoading] = useState(false);
     const [drawervisible, setDrawerVisible] = useState(false);
+    
+    const { logout } = useAuth0();
 
     const history = useHistory();
 
@@ -113,7 +116,7 @@ const Home = ({ data, callforlogin }) => {
                     {/* Fetching username and Displaying */}
 
                     <Row justify="center">
-                        <Title>Hello ,{data.userdata.fname}</Title>
+                        <Title>Hello ,</Title>
                     </Row>
              
                     <Affix className="home-logout-btn">
@@ -122,6 +125,7 @@ const Home = ({ data, callforlogin }) => {
                             onClick={()=>{
                                 sessionStorage.removeItem("auth");
                                 handleLogout();
+                                logout({returnTo: window.location.origin});
                             }} >Log Out</Button>
                     </Affix>
 
@@ -130,7 +134,6 @@ const Home = ({ data, callforlogin }) => {
                 <Content className="home-content">
 
                     {/* Randome pictures to display on Carousel */}
-
                     <Carousel autoplay style={{textAlign:"center"}}>
                         <Image className="carousel-image" src={Funny1} preview={false}/>
                         <Image className="carousel-image" src={Funny2} preview={false}/>
@@ -154,7 +157,7 @@ const Home = ({ data, callforlogin }) => {
 
                         {/* User's Profile using Desctiption layout */}
                 
-                        <Descriptions
+                        {console.log(data)/* <Descriptions
                             title="User Profile"
                             size={40}
                             column={1} >
@@ -165,7 +168,7 @@ const Home = ({ data, callforlogin }) => {
                             <Descriptions.Item label="Phone No">{data.userdata.phonenumber}</Descriptions.Item>
                             <Descriptions.Item label="Birth-date">{data.userdata.bdate}</Descriptions.Item>
 
-                        </Descriptions>
+                        </Descriptions> */}
 
                     </Drawer>
                 </Content>

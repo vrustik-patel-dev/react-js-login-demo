@@ -3,15 +3,24 @@ import { connect } from 'react-redux';
 
 import { Route, BrowserRouter as Router, Switch, Redirect } from "react-router-dom";
 
+import { Spin } from 'antd';
+
+import { actions } from './Actions';
+
+import { useAuth0 } from "@auth0/auth0-react";
+
 import Login from './Pages/Login/login';
 import Register from './Pages/Register/register';
 import Home from './Pages/Home/home';
 import NoMatchPage from './Pages/NotFound';
 
 
-const App = ({disp, reduxstate}) => {
+const App = ({ reduxstate, disp }) => {
 
   const [loggedIn,setLoggedin] = useState();
+  const [justchanging,setJustchanging] = useState(0);
+
+  const { isAuthenticated, isLoading } = useAuth0();
 
   useEffect(()=>{
     if(reduxstate){
@@ -29,18 +38,31 @@ const App = ({disp, reduxstate}) => {
       }
     }
   }
+  console.log("Loading :-",isLoading);
+  console.log("Auth :",isAuthenticated);
+  console.log("Redux :",reduxstate);
+  if(isLoading){
+    return <Spin />
+  }
+
+  if(!isLoading){
+    if(justchanging===0){
+      disp(actions.auth.fulfill());
+      setJustchanging(2);
+    }
+  }
 
   return(
   <Router>
     <Switch>
       <Route exact path="/">
-        {loggedIn ? <Home callforlogin={callforlogin} data={reduxstate}/> : <Redirect to="/login" />}
+        {isAuthenticated ? <Home callforlogin={callforlogin} data={reduxstate}/> : <Redirect to="/login" />}
       </Route>
       <Route exact path="/login">
-        {loggedIn ? <Redirect to="/"/> : <Login callforlogin={callforlogin} data={reduxstate}/>}
+        {isAuthenticated ? <Redirect to="/"/> : <Login callforlogin={callforlogin} data={reduxstate}/>}
       </Route>
       <Route exact path="/register">
-        {loggedIn ? <Redirect to="/"/> : <Register callforlogin={callforlogin}/>}
+        {isAuthenticated ? <Redirect to="/"/> : <Register callforlogin={callforlogin}/>}
       </Route>
       <Route component={NoMatchPage} />
     </Switch>
