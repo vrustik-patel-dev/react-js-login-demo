@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-
 import {
     Layout,
     Typography,
@@ -14,20 +13,14 @@ import {
     Result,
     AutoComplete,
 } from 'antd';
-
-
 import {actions} from '../../Actions';
-
-
 import '../../Csss/register.css';
-
 
 const { Text, Title } = Typography;
 const { Content, Sider } = Layout;
 const { Option } = AutoComplete;
 
 const Register = ({callforlogin}) => {
-
     const [fname,setFname] = useState('');
     const [lname,setLname] = useState('');
     const [password,setPassword] = useState('');
@@ -35,17 +28,16 @@ const Register = ({callforlogin}) => {
     const [phonenumber,setPhonenumber] = useState();
     const [bdate,setBdate] = useState();
     const [gender,setGender] = useState();
+
+    // To display Registered message
     const [registered,setRegistered] = useState(false);
 
+    // For suggesting Autocomplete's results
     const [autoresult,setAutoresult] = useState([]);
 
-    
     const history = useHistory();
 
-
-
     async function handleSubmit() {
-
         let regesteruser = {
             fname : fname,
             lname : lname,
@@ -55,33 +47,31 @@ const Register = ({callforlogin}) => {
             gender : gender
         }
 
+        // Storing data to localStorage
         localStorage.setItem(emailid, JSON.stringify(regesteruser));
+
+        // dispatching auth trigger action 
         callforlogin(actions.auth.trigger({forauth:true,uname:fname}));
+
+        //setting registered value to diplay message
         setRegistered(true);
     }
 
-
-    const gotoLogin = () => {
-        history.replace("/login");
-    }
-
-
     const handleautosearch = (value) => {
         let autores = [];
-
         if (!value || value.indexOf('@')>=0) {
             autores = [];
         } else {
             autores = ['gmail.com','yahoo.com','yahoo.in','hotmail.com','example.com'].map((domain)=>`${value}@${domain}`);
         }
-
         setAutoresult(autores);
     }
-
 
     if(registered){
         let msg = `Hello ${fname} ${lname}, Welcome to our Web-World....!!!!!`
         return <Layout style={{ minHeight: '100vh' }} className="centerresult">
+
+            {/* Displaying Registration succesful message */}
             <Result
                 status="success"
                 title="Account Created Successfully!"
@@ -100,7 +90,6 @@ const Register = ({callforlogin}) => {
     return <>
     <Layout className="register" style={{ minHeight: '100vh' }}>
         <Sider width={400} style={{background:'transparent'}}>
-            
             <Title className="Registratinmsg">
                 You are few clicks away to create your account.
             </Title>
@@ -108,14 +97,15 @@ const Register = ({callforlogin}) => {
                 <Row justify="center">
                     <Text>Already have an account?</Text>
                 </Row>
-
+                {/* Go to login page option */}
                 <Row justify="center">
-                    <Button className="loginbtnreg" shape="round" onClick={()=>gotoLogin()}>
+                    <Button className="loginbtnreg" shape="round" onClick={()=>history.replace("/login")}>
                         Log In
                     </Button>
                 </Row>
             </Text>
         </Sider>
+
         <Content className="regstercontent">
             <Form 
                 className="loginForm" 
@@ -143,6 +133,7 @@ const Register = ({callforlogin}) => {
                                         },
                                         {
                                             validator: (_, value) => {
+                                                    //Validate if only alphabets are entered or not
                                                     if(/^[a-zA-Z]+$/.test(value)){
                                                         return Promise.resolve(setFname(value));
                                                     }
@@ -174,6 +165,7 @@ const Register = ({callforlogin}) => {
                                         },
                                         {
                                             validator: (_, value) => {
+                                                    //Validate if only alphabets are entered or not
                                                     if(/^[a-zA-Z]+$/.test(value)){
                                                         return Promise.resolve(setLname(value));
                                                     }
@@ -203,6 +195,7 @@ const Register = ({callforlogin}) => {
                                         },
                                         {
                                             validator: (_, value) => {
+                                                    //Check for one small alphabet, one capital alphabet, one digit, one special character and minimum length
                                                     if(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!_%*?&])[A-Za-z\d@$!_%*?&]{8,}$/.test(value)){
                                                         return Promise.resolve(setPassword(value));
                                                     }
@@ -231,6 +224,7 @@ const Register = ({callforlogin}) => {
                                         },
                                         ({ getFieldValue }) => ({
                                             validator(rule, value) {
+                                                //Comparing with "Password's" value
                                                 if (!value || getFieldValue('password') === value) {
                                                     return Promise.resolve();
                                                 }
@@ -256,7 +250,7 @@ const Register = ({callforlogin}) => {
                                 validateTrigger="onBlur"
                                 rules={[{ required: true, type: "email", message: 'Please enter valid E-mail ID!' }]}
                             >
-
+                                {/* AutoComplete used to suggest email-Ids as soon as user start entering it */}
                                 <AutoComplete
                                     onSearch={handleautosearch}
                                     className="inputreg"
@@ -282,6 +276,7 @@ const Register = ({callforlogin}) => {
                                         { required: true,  len:10, message: 'Enter 10-Digit number!' },
                                         {
                                             validator: (_, value) => {
+                                                    //Validate if only digits are entered or not
                                                     if(/^\d+$/.test(value)){
                                                         return Promise.resolve(setPhonenumber(value));
                                                     }
@@ -295,16 +290,23 @@ const Register = ({callforlogin}) => {
                             </Form.Item>
                         </Row>
                         <Row>
+                            {/* Used Datepicker to select birthdate */}
                             <Form.Item
                                 className="inputregform"
                                 name="bdate"
                                 validateTrigger="onBlur"
                                 rules={[{ required: true,  message: 'Enter BirthDate!' }]}
                             >
-                                <DatePicker size="large" className="inputreg" placeholder="Birth Date" onChange={(date,datestring)=>setBdate(datestring)}/>
+                                <DatePicker 
+                                    size="large" 
+                                    className="inputreg" 
+                                    placeholder="Birth Date" 
+                                    onChange={(date,datestring)=>setBdate(datestring)}
+                                />
                             </Form.Item>
                         </Row>
                         <Row>
+                            {/* Select option used for gender option */}
                             <Form.Item
                                 className="inputregform"
                                 name="gender"
@@ -325,7 +327,6 @@ const Register = ({callforlogin}) => {
                         Register
                     </Button>
                 </Row>
-
             </Form>
         </Content>
     </Layout>

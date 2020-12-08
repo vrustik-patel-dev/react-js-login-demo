@@ -20,6 +20,12 @@
     background-color: #7f7903;
 }
 
+.home-logout-btn {
+    position: absolute; 
+    top: 0;
+    right: 20px;
+}
+
 .home-content{
     height: 100%;
     position: relative;

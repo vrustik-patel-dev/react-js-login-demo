@@ -4,7 +4,6 @@ import { actions } from '../Actions';
 var initialState = {
     auth : false,
     id:'',
-    username : '',
     userdata : '',
 }
 
@@ -21,7 +20,6 @@ const Reducerfunction = (state=initialState,action) => {
         case actions.auth.SUCCESS :
             state.auth = action.payload.auth;
             if(action.payload.auth){
-                state.username = action.payload.uname.fname;
                 state.userdata = action.payload.uname;
                 state.id = action.payload.id;
             }else{
@@ -34,6 +32,7 @@ const Reducerfunction = (state=initialState,action) => {
             console.log("Authentication closed");
             return state;
         case actions.auth.FULFILL :
+            console.log("Authentication fulfilled");
             return state;
         default :
             break;

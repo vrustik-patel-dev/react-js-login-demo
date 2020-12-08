@@ -40,9 +40,8 @@ const App = ({disp, reduxstate}) => {
         {loggedIn ? <Redirect to="/"/> : <Login callforlogin={callforlogin} data={reduxstate}/>}
       </Route>
       <Route exact path="/register">
-        <Register callforlogin={callforlogin}/>
+        {loggedIn ? <Redirect to="/"/> : <Register callforlogin={callforlogin}/>}
       </Route>
-
       <Route component={NoMatchPage} />
     </Switch>
   </Router>

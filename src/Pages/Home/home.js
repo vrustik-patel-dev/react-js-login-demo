@@ -14,13 +14,11 @@ import {
     Card,
     Descriptions,
     Popover,
-    Avatar,
     BackTop,
     Carousel,
     Tooltip,
 } from 'antd';
 
-import { UserOutlined } from '@ant-design/icons';
 
 import { actions } from '../../Actions';
 
@@ -54,7 +52,6 @@ const Home = ({ data, callforlogin }) => {
         setDrawerVisible(false);
     }
 
-
     const delay = (ms) => new Promise(res => setTimeout(res, ms))
 
     async function handleLogout(){
@@ -76,84 +73,104 @@ const Home = ({ data, callforlogin }) => {
     
 
     return <Spin spinning={loading} size="large">
-    <BackTop />
-    <Layout style={{ minHeight: '100vh' }}>
-        <Sider className="sidehome" width={300}>
-            <Image className="homelogo" src={Logo} preview={false}/>
 
-                <List
-                    itemLayout="horizontal"
-                    dataSource={Object.entries(localStorage)}
-                    renderItem={item => (
-                      <List.Item>
-                            <Popover 
-                                content={`${item[0]}`} 
-                                title={`${JSON.parse(item[1]).fname} ${JSON.parse(item[1]).lname}`}
-                                placement="right" >
+        <BackTop />
+
+        <Layout style={{ minHeight: '100vh' }}>
+            <Sider className="sidehome" width={300}>
+                <Image className="homelogo" src={Logo} preview={false}/>
+
+                    {/* List of users saved in local storage */}
+
+                    <List
+                        itemLayout="horizontal"
+                        dataSource={Object.entries(localStorage)}
+                        renderItem={item => (
+                            <List.Item>
+                                <Popover 
+                                    content={`${item[0]}`} 
+                                    title={`${JSON.parse(item[1]).fname} ${JSON.parse(item[1]).lname}`}
+                                    placement="right" >
+
+                                    <Card hoverable className="listofuser" bordered={false}>
+                                        <Meta
+                                            title={`${JSON.parse(item[1]).fname} ${JSON.parse(item[1]).lname}`}
+                                        />
+                                    </Card>
 
 
-                                <Card hoverable className="listofuser" bordered={false}>
-                                    <Meta
-                                        title={`${JSON.parse(item[1]).fname} ${JSON.parse(item[1]).lname}`}
-                                    />
-                                </Card>
-
-
-                            </Popover>
-                        </List.Item>
-                    )}
-                />
+                                </Popover>
+                            </List.Item>
+                        )}
+                    />
             </Sider>
        
 
-        <Layout>
-            <Header className="headerhome">
-                <Row justify="center">
-                    <Title>Hello ,{data.username}</Title>
-                </Row>
+            <Layout>
+
+                <Header className="headerhome">
+
+                    {/* Fetching username and Displaying */}
+
+                    <Row justify="center">
+                        <Title>Hello ,{data.userdata.fname}</Title>
+                    </Row>
              
-                <Affix  style={{ position: 'absolute', top: 0, right: 10 }}>
-                    <Button shape="round" onClick={()=>handleLogout()} >Log Out</Button>
-                </Affix>
-            </Header>
+                    <Affix className="home-logout-btn">
+                        <Button 
+                            shape="round" 
+                            onClick={()=>{
+                                sessionStorage.removeItem("auth");
+                                handleLogout();
+                            }} >Log Out</Button>
+                    </Affix>
 
-            <Content className="home-content">
+                </Header>
 
-                <Carousel autoplay style={{textAlign:"center"}}>
-                    <Image className="carousel-image" src={Funny1} preview={false}/>
-                    <Image className="carousel-image" src={Funny2} preview={false}/>
-                    <Image className="carousel-image" src={Funny3} preview={false}/>
-                    <Image className="carousel-image" src={Funny4} preview={false}/>
-                </Carousel>
+                <Content className="home-content">
 
-                <Tooltip title="Click Here to open User's Profile!">
-                    <Button className="home-content-btn" shape="round" onClick={()=>showDrawer()}>
-                        View Profile
-                    </Button>
-                </Tooltip>
+                    {/* Randome pictures to display on Carousel */}
 
-                <Drawer
-                    placement="right"
-                    width={"25%"}
-                    onClose={closeDrawer}
-                    visible={drawervisible} >
+                    <Carousel autoplay style={{textAlign:"center"}}>
+                        <Image className="carousel-image" src={Funny1} preview={false}/>
+                        <Image className="carousel-image" src={Funny2} preview={false}/>
+                        <Image className="carousel-image" src={Funny3} preview={false}/>
+                        <Image className="carousel-image" src={Funny4} preview={false}/>
+                    </Carousel>
+
+                    {/* A Button to display User's Profile through Drawer */}
+
+                    <Tooltip title="Click Here to open User's Profile!">
+                        <Button className="home-content-btn" shape="round" onClick={()=>showDrawer()}>
+                            View Profile
+                        </Button>
+                    </Tooltip>
+
+                    <Drawer
+                        placement="right"
+                        width={"25%"}
+                        onClose={closeDrawer}
+                        visible={drawervisible} >
+
+                        {/* User's Profile using Desctiption layout */}
                 
-                    <Descriptions
-                        title="User Profile"
-                        size={40}
-                        column={1} >
+                        <Descriptions
+                            title="User Profile"
+                            size={40}
+                            column={1} >
 
-                        <Descriptions.Item label="Name">{data.userdata.fname} {data.userdata.lname}</Descriptions.Item>
-                        <Descriptions.Item label="Email">{data.id}</Descriptions.Item>
-                        <Descriptions.Item label="Gender">{data.userdata.gender}</Descriptions.Item>
-                        <Descriptions.Item label="Phone No">{data.userdata.phonenumber}</Descriptions.Item>
-                        <Descriptions.Item label="Birth-date">{data.userdata.bdate}</Descriptions.Item>
-                    </Descriptions>
+                            <Descriptions.Item label="Name">{data.userdata.fname} {data.userdata.lname}</Descriptions.Item>
+                            <Descriptions.Item label="Email">{data.id}</Descriptions.Item>
+                            <Descriptions.Item label="Gender">{data.userdata.gender}</Descriptions.Item>
+                            <Descriptions.Item label="Phone No">{data.userdata.phonenumber}</Descriptions.Item>
+                            <Descriptions.Item label="Birth-date">{data.userdata.bdate}</Descriptions.Item>
 
-                </Drawer>
-            </Content>
+                        </Descriptions>
+
+                    </Drawer>
+                </Content>
+            </Layout>
         </Layout>
-    </Layout>
     </Spin>
 }
 

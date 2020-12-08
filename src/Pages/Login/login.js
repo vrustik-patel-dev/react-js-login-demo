@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import { useHistory } from 'react-router-dom';
-
 import { 
     Typography, 
     Input, 
@@ -17,7 +16,6 @@ import {
     Spin,
     message
 } from 'antd';
-
 import { 
     EyeInvisibleOutlined, 
     EyeTwoTone, 
@@ -26,48 +24,56 @@ import {
     GithubFilled, 
 } from '@ant-design/icons';
 
-
 import 'antd/dist/antd.css';
 import '../../Csss/login.css'
-
 import {actions} from '../../Actions';
-
 import loginart from '../../Images/loginart.png';
-
 
 const { Text, Title, Link } = Typography;
 const {Header,Content,Footer} = Layout;
 
 const Login = ({ callforlogin }) => {
-
     let uname = Cookies.get('username');
     let pwd = Cookies.get('password');
-
     const [id,setId] = useState(uname);
     const [password,setPassword] = useState(pwd);
     const [remember,setRemember] = useState(true);
     const [loading,setLoading] = useState(false);
+    const [initial,setInitial] = useState(true);
     
-
-
     const history = useHistory();
 
+    let checksessionauth = sessionStorage.getItem("auth");
+
+    useEffect(()=>{
+        if(initial){
+            setInitial(false);
+            if(checksessionauth){
+                let userdata = localStorage.getItem(id);
+                userdata = JSON.parse(userdata);
+                if(userdata){
+                    callforlogin(actions.auth.trigger({forauth:true,uname:userdata,id:id}));
+                    history.replace("/");
+                }else{
+                    callforlogin(actions.auth.trigger({forauth:false}))
+                }
+            }
+        }
+    },[initial,callforlogin,history,id,checksessionauth])
 
     const delay = (ms) => new Promise(res => setTimeout(res, ms))
 
     async function checkauth(){
-
         setLoading(true);
-
         try{
             var userdata = localStorage.getItem(id);
             userdata = JSON.parse(userdata);
-
             if(userdata){
                 if (password===userdata.password){
                     if(remember){
                         Cookies.set('username',id);
-                        Cookies.set('password',password)
+                        Cookies.set('password',password);
+                        sessionStorage.setItem("auth", true);
                     }
                     await delay(4000);
                     setLoading(false);
@@ -87,11 +93,7 @@ const Login = ({ callforlogin }) => {
             console.log("Error :",err);
             setLoading(false);
         }
-
     }
-
-
-    
 
     return <>
     <Layout className="loginContainer" style={{ minHeight: '100vh' }}>
@@ -182,7 +184,10 @@ const Login = ({ callforlogin }) => {
             </Form>
         </Content>
         
-        <Footer style={{ textAlign: 'center', background: 'transparent' }}><Divider />Copyright Recerved ©2020</Footer>
+        <Footer style={{ textAlign: 'center', background: 'transparent' }}>
+            <Divider />
+            Copyright Recerved ©2020
+        </Footer>
     </Layout>
     </>;
 }
