@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import {
     Layout,
     Typography,
@@ -28,6 +29,7 @@ const Register = ({callforlogin}) => {
     const [phonenumber,setPhonenumber] = useState();
     const [bdate,setBdate] = useState();
     const [gender,setGender] = useState();
+    const [initial,setInitial] = useState(true);
 
     // To display Registered message
     const [registered,setRegistered] = useState(false);
@@ -35,7 +37,25 @@ const Register = ({callforlogin}) => {
     // For suggesting Autocomplete's results
     const [autoresult,setAutoresult] = useState([]);
 
+    
+    let checksessionauth = sessionStorage.getItem("auth");
+
     const history = useHistory();
+    
+    useEffect(()=>{
+        if(initial){
+            setInitial(false);
+            if(checksessionauth){
+                let userdata = localStorage.getItem(Cookies.get('username'));
+                userdata = JSON.parse(userdata);
+                callforlogin(actions.auth.trigger({forauth:true,uname:userdata,id:Cookies.get('username')}));
+                history.replace("/");
+            }else{
+                callforlogin(actions.auth.trigger({forauth:false}))
+            }
+        }
+    },[initial, checksessionauth, callforlogin, history])
+
 
     async function handleSubmit() {
         let regesteruser = {
